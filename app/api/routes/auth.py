@@ -6,8 +6,8 @@ from sqlalchemy.exc import IntegrityError
 from app.schemas.user_schema import UserCreate, UserResponse
 from app.api.deps import get_db
 from app.models.user_model import User
-from app.util.create_full_name import create_full_name
 from app.core.security import hash_password
+from app.core.database import AsyncSessionLocal
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -18,7 +18,7 @@ async def register_user(
 ):
     user = User(
         email=user_data.email,
-        full_name=create_full_name(user_data.name, user_data.last_name),
+        full_name=user_data.full_name,
         role="user",
         hashed_password=hash_password(user_data.password)
     )

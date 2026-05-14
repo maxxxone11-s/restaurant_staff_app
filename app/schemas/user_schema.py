@@ -5,8 +5,7 @@ from datetime import datetime
 class UserCreate(BaseModel):
     email: str
     password: str
-    name: str
-    last_name: str
+    full_name: str
 
 class UserResponse(BaseModel):
     id: int
