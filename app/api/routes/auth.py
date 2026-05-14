@@ -7,7 +7,6 @@ from app.schemas.user_schema import UserCreate, UserResponse
 from app.api.deps import get_db
 from app.models.user_model import User
 from app.core.security import hash_password
-from app.core.database import AsyncSessionLocal
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
