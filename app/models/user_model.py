@@ -8,10 +8,10 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
 
-    email: Mapped[str] = mapped_column(unique=True, nullable=True)
+    email: Mapped[str] = mapped_column(unique=True, nullable=False)
 
-    hashed_password: Mapped[str] = mapped_column(String(255), unique=True, nullable=True)
+    hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    full_name: Mapped[str] = mapped_column(unique=False, nullable=True)
+    full_name: Mapped[str] = mapped_column(unique=False, nullable=False)
 
-    role: Mapped[str] = mapped_column(unique=False, nullable=True)
+    role: Mapped[str] = mapped_column(unique=False, nullable=False)

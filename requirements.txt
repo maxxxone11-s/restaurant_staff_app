@@ -3,3 +3,4 @@ sqlalchemy
 pydantic
 asyncpg
 uvicorn
+greenlet
