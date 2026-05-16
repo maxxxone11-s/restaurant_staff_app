@@ -8,5 +8,5 @@ class ShiftResponse(BaseModel):
     id: int
     user_id: int
     open_shift: datetime
-    closed_shift: datetime
-    revenue: int
+    closed_shift: datetime | None
+    revenue: int | None

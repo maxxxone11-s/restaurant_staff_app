@@ -24,4 +24,4 @@ class User(Base):
         nullable=False
     )
 
-shifts = relationship("Shift", back_populates="user")
+    shifts = relationship("Shift", back_populates="user")
