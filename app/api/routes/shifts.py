@@ -48,24 +48,17 @@ async def closed_shift(
     is_open_shift = await db.execute(
         select(Shift)
         .where(Shift.user_id == current_user.id)
-        .where(Shift.closed_shift.is_not(None))
+        .where(Shift.closed_shift.is_(None))
     )
 
     result = is_open_shift.scalar_one_or_none()
 
-    if result is None:
-        raise HTTPException(status_code=400, detail="Смена не открыта")
+    shift = Shift()
+
+    result.closed_shift = func.now()
+    result.revenue = close_data.revenue
+
+    await db.commit()
+    db.refresh(shift)
+    return shift
     
-    shift = Shift(
-        user_id=current_user.id,
-        closed_shift=func.now(),
-        revenue=close_data.revenue
-    )
-    
-    try:
-        db.add(shift)
-        await db.commit()
-        await db.refresh(shift)
-        return shift
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
