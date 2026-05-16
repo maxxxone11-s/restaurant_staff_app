@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 
-from app.schemas.user_schema import UserCreate, UserResponse
+from app.schemas.user_schema import UserCreate, UserResponse, UserLogin
 from app.api.deps import get_db, get_current_user
 from app.models.user_model import User
 from app.core.security import hash_password, verify_password
@@ -34,10 +34,12 @@ async def register_user(
 
 @router.post("/login")
 async def login_user(
-    email: str,
-    password: str,
+    user_data_login: UserLogin,
     db: AsyncSession = Depends(get_db)
 ):
+    email = user_data_login.email
+    password = user_data_login.password
+
     result = await db.execute(
         select(User)
         .where(User.email == email)

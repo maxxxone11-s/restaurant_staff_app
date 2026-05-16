@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import select
 
-from app.models import User
+from app.models.user_model import User
 from app.core.security import decode_token
 from app.core.database import AsyncSessionLocal
 
