@@ -63,14 +63,29 @@ async def login_user(
     raise HTTPException(status_code=404, detail="Password don't correct")
     
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
+async def get_current_user(
+        token: str = Depends(oauth2_scheme),
+        db: AsyncSession = Depends(get_db)
+):
     user = decode_token(token)
 
     if user is None:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
     
-    return user
+    user_id = user["user_id"]
+
+    user_in_db = await db.execute(
+        select(User)
+        .where(User.id == user_id)
+    )
+
+    current_user = user_in_db.scalar_one_or_none()
+
+    if current_user:
+        return current_user
+    
+    raise HTTPException(status_code=404, detail="Пользователь не найден")
 
 @router.get("/me")
 async def get_me(current_user = Depends(get_current_user)):
-    return current_user
+    return {"id": current_user.id, "email": current_user.email, "role": current_user.role, "full_name": current_user.full_name}
