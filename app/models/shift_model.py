@@ -9,7 +9,7 @@ class Shift(Base):
     __tablename__ = "shifts"
 
     user_id: Mapped[int] = mapped_column(
-        ForeignKey=("users.id"),
+        ForeignKey("users.id"),
         nullable=False
     )
 

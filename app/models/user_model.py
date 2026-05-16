@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, DateTime, func
 from datetime import datetime
 
@@ -23,3 +23,5 @@ class User(Base):
         server_default=func.now(),
         nullable=False
     )
+
+shifts = relationship("Shift", back_populates="user")
