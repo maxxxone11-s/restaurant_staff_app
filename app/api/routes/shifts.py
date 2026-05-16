@@ -58,8 +58,10 @@ async def closed_shift(
 
     result.closed_shift = func.now()
     result.revenue = close_data.revenue
-
-    await db.commit()
-    db.refresh(result)
-    return result
-    
+    try:
+        await db.commit()
+        await db.refresh(result)
+        return result
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
