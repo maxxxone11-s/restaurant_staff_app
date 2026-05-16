@@ -7,6 +7,7 @@ from app.schemas.user_schema import UserCreate, UserResponse
 from app.api.deps import get_db
 from app.models.user_model import User
 from app.core.security import hash_password, verify_password
+from app.services.access_token import create_access_token, decode_token
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -39,7 +40,7 @@ async def login_user(
 ):
     result = await db.execute(
         select(User)
-        .where(email == User.email)
+        .where(User.email == email)
     )
 
     user = result.scalar_one_or_none()
@@ -47,15 +48,14 @@ async def login_user(
     if not user:
         raise HTTPException(status_code=400, detail="User not found")
     
-    verify_password = verify_password(password, user.hashed_password)
+    is_password_valid = verify_password(password, user.hashed_password)
 
-    if verify_password:
-        return create_access_token()
+    if is_password_valid:
+        access_token = create_access_token(user.id, user.email)
+        return {
+            "access_token": access_token,
+            "token_type": "bearer"
+        }
 
     raise HTTPException(status_code=404, detail="Password don't correct")
     
-def create_access_token():
-    return {"Login": "successful"}
-
-def decode_token():
-    pass
