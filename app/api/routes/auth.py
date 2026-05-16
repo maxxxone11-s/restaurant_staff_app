@@ -6,8 +6,8 @@ from sqlalchemy.exc import IntegrityError
 from app.schemas.user_schema import UserCreate, UserResponse
 from app.api.deps import get_db
 from app.models.user_model import User
-from app.core.security import hash_password, verify_password
-from app.core.access_token import create_access_token, decode_token
+from app.core.security import hash_password, verify_password, decode_token
+from app.services.access_token import create_access_token
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 

@@ -1,6 +1,5 @@
-from jose import jwt, JWTError
+from jose import jwt
 from datetime import datetime, timedelta, timezone
-from fastapi import HTTPException
 from dotenv import load_dotenv
 import os
 
