@@ -8,6 +8,7 @@ from app.api.deps import get_db, get_current_user
 from app.models.user_model import User
 from app.core.security import hash_password, verify_password
 from app.services.access_token import create_access_token
+from app.core.roles import UserRole
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -19,7 +20,7 @@ async def register_user(
     user = User(
         email=user_data.email,
         full_name=user_data.full_name,
-        role="waiter",
+        role=UserRole.WAITER,
         hashed_password=hash_password(user_data.password)
     )
     try:

@@ -1,8 +1,11 @@
 from passlib.context import CryptContext
 from jose import jwt
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
 from dotenv import load_dotenv
 import os
+
+from app.api.deps import get_current_user
+from app.core.roles import UserRole
 
 load_dotenv()
 
@@ -37,3 +40,11 @@ def decode_token(token):
     
     except jwt.JWTError:
         raise HTTPException(status_code=401, detail="Ошибка: Неверная подпись или испорченный токен.")
+    
+
+async def require_roles(
+    user_role,
+    current_user = Depends(get_current_user)
+):
+    if current_user.role != user_role:
+        raise HTTPException(status_code=403, detail="Forbidden")
