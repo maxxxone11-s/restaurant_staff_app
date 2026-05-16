@@ -19,7 +19,7 @@ async def register_user(
     user = User(
         email=user_data.email,
         full_name=user_data.full_name,
-        role="user",
+        role="waiter",
         hashed_password=hash_password(user_data.password)
     )
     try:
