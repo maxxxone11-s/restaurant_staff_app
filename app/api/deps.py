@@ -35,3 +35,10 @@ async def get_current_user(
         return current_user
     
     raise HTTPException(status_code=404, detail="Пользователь не найден")
+
+async def require_roles(
+    allowed_roles: list[str],
+    current_user = Depends(get_current_user)
+):
+    if current_user.role not in allowed_roles:
+        raise HTTPException(status_code=403, detail="Forbidden")
