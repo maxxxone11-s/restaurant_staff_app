@@ -88,4 +88,4 @@ async def get_current_user(
 
 @router.get("/me", response_model=UserResponse)
 async def get_me(current_user = Depends(get_current_user)):
-    return {"id": current_user.id, "email": current_user.email, "role": current_user.role, "full_name": current_user.full_name}
+    return current_user
