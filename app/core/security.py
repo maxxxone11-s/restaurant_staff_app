@@ -43,8 +43,8 @@ def decode_token(token):
     
 
 async def require_roles(
-    user_role,
+    allowed_roles: list[str],
     current_user = Depends(get_current_user)
 ):
-    if current_user.role != user_role:
+    if current_user.role not in allowed_roles:
         raise HTTPException(status_code=403, detail="Forbidden")
