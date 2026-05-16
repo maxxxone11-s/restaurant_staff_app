@@ -24,13 +24,12 @@ def decode_token(token):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
     
-        user_id = payload.get("user_id")
-        email = payload.get("email")
+        user_id = str | None = payload.get("user_id")
+        email = str | None = payload.get("email")
 
         if user_id is None or email is None:
             raise HTTPException(status_code=404, detail="Ошибка: В токене отсутствуют необходимые поля.")
             
-        
         return {"user_id": user_id, "email": email}
 
     except jwt.ExpiredSignatureError:
