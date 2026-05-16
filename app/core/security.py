@@ -1,4 +1,12 @@
 from passlib.context import CryptContext
+from jose import jwt, JWTError
+from fastapi import HTTPException
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 pwd_context = CryptContext(
     schemes=["bcrypt"],
@@ -11,4 +19,22 @@ def hash_password(password: str):
 def verify_password(password: str, hashed_password: str) -> bool:
     return pwd_context.verify(password, hashed_password)
 
-SECRET_KEY = "90ab7c244a156c04f99dbd757d4e321f5cf120f7804afb5cb0fc2fb7324d15fa"
+
+def decode_token(token):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+    
+        user_id = payload.get("user_id")
+        email = payload.get("email")
+
+        if user_id is None or email is None:
+            raise HTTPException(status_code=404, detail="Ошибка: В токене отсутствуют необходимые поля.")
+            
+        
+        return {"user_id": user_id, "email": email}
+
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=404, detail="Ошибка: Срок действия токена истек.")
+    
+    except jwt.JWTError:
+        raise HTTPException(status_code=404, detail="Ошибка: Неверная подпись или испорченный токен.")
