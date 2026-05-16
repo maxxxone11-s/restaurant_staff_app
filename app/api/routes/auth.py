@@ -1,18 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 
 from app.schemas.user_schema import UserCreate, UserResponse
-from app.api.deps import get_db
+from app.api.deps import get_db, get_current_user
 from app.models.user_model import User
-from app.core.security import hash_password, verify_password, decode_token
+from app.core.security import hash_password, verify_password
 from app.services.access_token import create_access_token
 
 router = APIRouter(prefix="/auth", tags=["auth"])
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 @router.post("/register", response_model=UserResponse)
 async def register_user(
@@ -61,30 +58,6 @@ async def login_user(
         }
 
     raise HTTPException(status_code=404, detail="Password don't correct")
-    
-
-async def get_current_user(
-        token: str = Depends(oauth2_scheme),
-        db: AsyncSession = Depends(get_db)
-):
-    user = decode_token(token)
-
-    if user is None:
-        raise HTTPException(status_code=404, detail="Пользователь не найден")
-    
-    user_id = user["user_id"]
-
-    user_in_db = await db.execute(
-        select(User)
-        .where(User.id == user_id)
-    )
-
-    current_user = user_in_db.scalar_one_or_none()
-
-    if current_user:
-        return current_user
-    
-    raise HTTPException(status_code=404, detail="Пользователь не найден")
 
 @router.get("/me", response_model=UserResponse)
 async def get_me(current_user = Depends(get_current_user)):
