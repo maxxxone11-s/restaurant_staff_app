@@ -39,7 +39,7 @@ async def open_shift(
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.get("/close", response_model=ShiftResponse)
+@router.post("/close", response_model=ShiftResponse)
 async def closed_shift(
     close_data: ShiftClose,
     current_user = Depends(get_current_user),
@@ -53,12 +53,13 @@ async def closed_shift(
 
     result = is_open_shift.scalar_one_or_none()
 
-    shift = Shift()
+    if result is None:
+        raise HTTPException(status_code=404, detail="Смена не открыта")
 
     result.closed_shift = func.now()
     result.revenue = close_data.revenue
 
     await db.commit()
-    db.refresh(shift)
-    return shift
+    db.refresh(result)
+    return result
     
