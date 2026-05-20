@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import require_roles, get_db
 from app.models.shift_model import Shift
+from app.models.user_model import User
 
 router = APIRouter(prefix="/manager", tags=["manager"])
 
@@ -34,5 +35,31 @@ async def get_top_revenue_waiter(
     )
 
     top_waiters = result.all()
+
+    return top_waiters
+
+
+@router.get("/top_waiters")
+async def get_name_top_waiter(
+    current_user = Depends(require_roles(["admin", "manager"])),
+    db: AsyncSession = Depends(get_db)
+):
+    result = await db.execute(
+        select(
+            User.full_name,
+            func.sum(Shift.revenue).label("total_revenue")
+        )
+        .join(Shift, Shift.user_id == User.id)
+        .where(Shift.revenue.is_not(None))
+        .group_by(User.full_name)
+        .order_by(func.sum(Shift.revenue).desc())
+    )
+
+    # data = []
+
+    top_waiters = result.mappings().all()
+
+    # for name, total in top_waiters:
+    #     data.append({"full_name": name, "total_revenue": total})
 
     return top_waiters

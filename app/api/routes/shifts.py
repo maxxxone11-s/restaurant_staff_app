@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user, get_db
 from app.models.shift_model import Shift
 from app.schemas.shift_schema import ShiftResponse, ShiftClose
+from app.services.shift_service import calculate_hours_worked
 
 router = APIRouter(prefix="/shifts", tags=["shifts"])
 
@@ -69,30 +70,34 @@ async def closed_shift(
 @router.get("/my", response_model=list[ShiftResponse])
 async def my_shifts(
     current_user = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    limit: int = Query(default=10, le=30),
+    offset: int = Query(default=0),
+    status: str = Query(default=None)
 ):
-    result = await db.execute(
+    if status == "open":
+        query = (
         select(Shift)
         .where(Shift.user_id == current_user.id)
-    )
+        .where(Shift.closed_shift.is_(None))
+        )
+    elif status == "closed":
+        query = (
+        select(Shift)
+        .where(Shift.user_id == current_user.id)
+        .where(Shift.closed_shift.is_not(None))
+        )
+    else:
+        query = (
+        select(Shift)
+        .where(Shift.user_id == current_user.id)
+        )
 
+    query = query.limit(limit).offset(offset)
+    
+    result = await db.execute(query)
     shifts_user = result.scalars().all()
-    response = []
 
-    for shift in shifts_user:
-        hours_worked = None
-        
-        if shift.closed_shift is not(None):
-            delta = shift.closed_shift - shift.open_shift
-            hours_worked = delta.total_seconds() / 3600
-
-        response.append({
-            "id": shift.id,
-            "user_id": shift.user_id,
-            "open_shift": shift.open_shift,
-            "closed_shift": shift.closed_shift,
-            "revenue": shift.revenue,
-            "hours_worked": hours_worked
-        })
+    response = calculate_hours_worked(shifts_user)
 
     return response

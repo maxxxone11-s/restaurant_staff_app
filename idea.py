@@ -1,4 +1,5 @@
-def create_full_name(name, lastname):
-    return name.capitalize() + ' ' + lastname.capitalize()
+lst = []
 
-print(create_full_name("max", "zadko"))
+lst.append({"name":"max", "city":"moskow"})
+
+print(lst)
