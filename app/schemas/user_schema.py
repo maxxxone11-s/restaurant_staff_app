@@ -12,7 +12,7 @@ class UserCreate(BaseModel):
 class UserResponse(BaseModel):
     id: int
     email: str
-    restaraunt_name: str
+    restaurant_name: str
     full_name: str
     position: str
     role: str
