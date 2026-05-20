@@ -12,9 +12,12 @@ class UserCreate(BaseModel):
 class UserResponse(BaseModel):
     id: int
     email: str
+    restaraunt_name: str
     full_name: str
+    position: str
     role: str
     hire_date: datetime
+    is_active: bool
 
     class Config:
         from_attributes = True

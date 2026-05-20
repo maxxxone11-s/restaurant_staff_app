@@ -28,6 +28,6 @@ class User(Base):
 
     role: Mapped[str] = mapped_column(unique=False, nullable=False)
 
-    is_active: Mapped[bool] = mapped_column(nullable=False)
+    is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
 
     shifts = relationship("Shift", back_populates="user")
