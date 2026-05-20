@@ -10,6 +10,16 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
 
+    restaurant_name: Mapped[str] = mapped_column(nullable=False)
+
+    position: Mapped[str] = mapped_column(nullable=False)
+
+    hire_date: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False
+    )
+
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
 
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -18,10 +28,6 @@ class User(Base):
 
     role: Mapped[str] = mapped_column(unique=False, nullable=False)
 
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False
-    )
+    is_active: Mapped[bool] = mapped_column(nullable=False)
 
     shifts = relationship("Shift", back_populates="user")

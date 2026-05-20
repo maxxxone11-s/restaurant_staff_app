@@ -23,7 +23,7 @@ async def get_all_revenue(
 
     return {"total_revenue": total_revenue}
 
-@router.get("/top_waiters", response_model=TopWaitersResponse)
+@router.get("/top_waiters", response_model=list[TopWaitersResponse])
 async def get_name_top_waiter(
     current_user = Depends(require_roles(["admin", "manager"])),
     db: AsyncSession = Depends(get_db)
