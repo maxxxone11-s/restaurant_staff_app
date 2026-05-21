@@ -27,3 +27,7 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
+class UserUpdate(BaseModel):
+    role: str | None = None
+    restaurant_name: str | None = None
+    is_active: bool | None = None
