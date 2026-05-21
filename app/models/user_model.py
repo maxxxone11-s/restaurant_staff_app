@@ -33,3 +33,4 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
 
     shifts = relationship("Shift", back_populates="user")
+    reward_purchase = relationship("RewardPurchase", back_populates="user")

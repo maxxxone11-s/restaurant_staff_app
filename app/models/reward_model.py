@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import func, DateTime, String
 
 from app.core.base import Base
@@ -22,3 +22,5 @@ class Reward(Base):
         server_default=func.now(),
         nullable=False
     )
+
+    reward_purchase = relationship("RewardPurchase", back_populates="reward")
