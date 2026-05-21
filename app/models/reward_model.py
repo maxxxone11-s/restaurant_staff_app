@@ -15,7 +15,7 @@ class Reward(Base):
 
     cost_points: Mapped[int] = mapped_column(nullable=False, unique=False)
 
-    is_active: Mapped[bool]
+    is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

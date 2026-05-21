@@ -10,6 +10,9 @@ class RewardResponse(BaseModel):
     id: int
     title: str
     description: str
-    cost_points: str
+    cost_points: int
     is_active: bool
     created_at: datetime
+
+    class Config:
+        from_attributes = True
