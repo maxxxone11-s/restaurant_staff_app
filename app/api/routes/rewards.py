@@ -4,7 +4,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_db, require_roles, get_current_user
 from app.schemas.reward_schema import RewardCreate, RewardResponse
+from app.schemas.reward_purchase_schema import RewardPurchaseResponse
 from app.models.reward_model import Reward
+from app.models.reward_purchase_model import RewardPurchase
 
 router = APIRouter(prefix="/rewards", tags=["rewards"])
 
@@ -67,9 +69,14 @@ async def buy_reward(
 
     if current_user.points >= result.cost_points:
         current_user.points -= result.cost_points
+        purchase = RewardPurchase(
+            cost_points=result.cost_points
+        )
         balance = current_user.points
+        db.add(purchase)
         await db.commit()
         await db.refresh(current_user)
+        await db.refresh(purchase)
         return {"reward": result.title, "price": result.cost_points, "balance": balance}
 
     raise HTTPException(status_code=400, detail="На балансе недостаточно средств")
