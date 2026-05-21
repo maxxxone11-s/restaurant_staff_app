@@ -7,6 +7,7 @@ from app.schemas.reward_schema import RewardCreate, RewardResponse
 from app.schemas.reward_purchase_schema import RewardPurchaseResponse
 from app.models.reward_model import Reward
 from app.models.reward_purchase_model import RewardPurchase
+from app.models.user_model import User
 
 router = APIRouter(prefix="/rewards", tags=["rewards"])
 
@@ -70,6 +71,8 @@ async def buy_reward(
     if current_user.points >= result.cost_points:
         current_user.points -= result.cost_points
         purchase = RewardPurchase(
+            user_id=current_user.id,
+            reward_id=result.id,
             cost_points=result.cost_points
         )
         balance = current_user.points
@@ -80,3 +83,20 @@ async def buy_reward(
         return {"reward": result.title, "price": result.cost_points, "balance": balance}
 
     raise HTTPException(status_code=400, detail="На балансе недостаточно средств")
+
+@router.get("/my")
+async def get_list_purchase(
+    current_user = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    result = await db.execute(
+        select(Reward.title, RewardPurchase.cost_points, RewardPurchase.purchased_at)
+        .join(Reward, RewardPurchase.reward_id == Reward.id)
+        .where(RewardPurchase.user_id == current_user.id)
+    )
+
+    result = result.mappings().all()
+
+    return result
+
+

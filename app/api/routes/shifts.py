@@ -6,7 +6,7 @@ from typing import Literal
 
 from app.api.deps import get_current_user, get_db
 from app.models.shift_model import Shift
-from app.schemas.shift_schema import ShiftResponse, ShiftClose
+from app.schemas.shift_schema import ShiftResponse, ShiftClose, ShiftResponseClosed
 from app.services.shift_service import calculate_hours_worked
 
 router = APIRouter(prefix="/shifts", tags=["shifts"])
@@ -42,7 +42,7 @@ async def open_shift(
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.post("/close", response_model=ShiftResponse)
+@router.post("/close", response_model=ShiftResponseClosed)
 async def closed_shift(
     close_data: ShiftClose,
     current_user = Depends(get_current_user),
@@ -61,10 +61,17 @@ async def closed_shift(
 
     result.closed_shift = func.now()
     result.revenue = close_data.revenue
+
+    get_points = close_data.revenue // 100
+    current_user.points += get_points
+
     try:
         await db.commit()
         await db.refresh(result)
-        return result
+        return {
+            "revenue": close_data.revenue,
+            "points": get_points
+            }
     except Exception as e:
         await db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
@@ -107,7 +114,6 @@ async def my_shifts(
             Shift.closed_shift.is_not(None)
         )
     
-
     query = query.limit(limit).offset(offset)
     
     result = await db.execute(query)

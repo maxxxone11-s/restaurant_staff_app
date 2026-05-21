@@ -20,16 +20,18 @@ async def register_user(
     user = User(
         email=user_data.email,
         full_name=user_data.full_name,
-        role=UserRole.WAITER,
+        position=user_data.position,
+        restaurant_name=user_data.restaurant_name,
+        role=UserRole.WAITER.value,
         hashed_password=hash_password(user_data.password)
     )
     try:
         db.add(user)
         await db.commit()
         await db.refresh(user)
-    except IntegrityError as e:
+    except Exception as e:
         await db.rollback()
-        raise HTTPException(status_code=400, detail="Пользователь с таким email уже существует.")
+        raise HTTPException(status_code=400, detail=f"Пользователь с таким email уже существует.{str(e)}")
 
     return user
 
