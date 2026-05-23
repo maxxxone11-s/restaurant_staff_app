@@ -42,6 +42,7 @@ async def get_all_users(
         "email":user.email,
         "restaurant_name": user.restaurant_name,
         "full_name": user.full_name,
+        "points": user.points,
         "position": user.position,
         "role": user.role,
         "hire_date": user.hire_date,

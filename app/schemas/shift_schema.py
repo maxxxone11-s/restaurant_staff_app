@@ -12,6 +12,13 @@ class ShiftResponse(BaseModel):
     hours_worked: float | None
     revenue: int | None
 
+class ShiftResponseOpen(BaseModel):
+    id: int
+    user_id: int
+    open_shift: datetime
+    closed_shift: datetime | None
+    revenue: int | None
+
 class ShiftResponseClosed(BaseModel):
     revenue: int
     points: int

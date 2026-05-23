@@ -16,3 +16,5 @@ def calculate_hours_worked(shifts_user):
             "revenue": shift.revenue,
             "hours_worked": hours_worked
         })
+
+    return response

@@ -14,6 +14,7 @@ class UserResponse(BaseModel):
     email: str
     restaurant_name: str
     full_name: str
+    points: int
     position: str
     role: str
     hire_date: datetime
@@ -28,6 +29,7 @@ class UserLogin(BaseModel):
     password: str
 
 class UserUpdate(BaseModel):
+    position: str | None = None
     role: str | None = None
     restaurant_name: str | None = None
     is_active: bool | None = None

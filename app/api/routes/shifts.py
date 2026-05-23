@@ -6,12 +6,12 @@ from typing import Literal
 
 from app.api.deps import get_current_user, get_db
 from app.models.shift_model import Shift
-from app.schemas.shift_schema import ShiftResponse, ShiftClose, ShiftResponseClosed
+from app.schemas.shift_schema import ShiftResponse, ShiftClose, ShiftResponseClosed, ShiftResponseOpen
 from app.services.shift_service import calculate_hours_worked
 
 router = APIRouter(prefix="/shifts", tags=["shifts"])
 
-@router.post("/open", response_model=ShiftResponse)
+@router.post("/open", response_model=ShiftResponseOpen)
 async def open_shift(
     current_user = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
