@@ -16,3 +16,8 @@ class RewardResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class RewardBuyResponse(BaseModel):
+    reward: str
+    price: int
+    balance: int

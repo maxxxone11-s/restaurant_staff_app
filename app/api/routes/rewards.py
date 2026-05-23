@@ -3,8 +3,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_db, require_roles, get_current_user
-from app.schemas.reward_schema import RewardCreate, RewardResponse
-from app.schemas.reward_purchase_schema import RewardPurchaseResponse
+from app.schemas.reward_schema import RewardCreate, RewardResponse, RewardBuyResponse
+from app.schemas.reward_purchase_schema import RewardPurchaseHistoryResponse
 from app.models.reward_model import Reward
 from app.models.reward_purchase_model import RewardPurchase
 from app.models.user_model import User
@@ -47,7 +47,7 @@ async def get_reward(
     
     raise HTTPException(status_code=404, detail="Наград в данный момент нету")
 
-@router.post("/{reward_id}/buy")
+@router.post("/{reward_id}/buy", response_model=RewardBuyResponse)
 async def buy_reward(
     reward_id: int,
     current_user = Depends(get_current_user),
@@ -84,7 +84,7 @@ async def buy_reward(
 
     raise HTTPException(status_code=400, detail="На балансе недостаточно средств")
 
-@router.get("/my")
+@router.get("/my", response_model=list[RewardPurchaseHistoryResponse])
 async def get_list_purchase(
     current_user = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)

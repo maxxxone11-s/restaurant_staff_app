@@ -1,9 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-class RewardPurchaseResponse(BaseModel):
-    id: int
-    user_id: int
-    reward_id: int
+class RewardPurchaseHistoryResponse(BaseModel):
+    title: str
     cost_points: int
     purchased_at: datetime
