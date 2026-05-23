@@ -9,7 +9,7 @@ from app.models.shift_model import Shift
 from app.schemas.shift_schema import ShiftResponse, ShiftResponseClosed, ShiftResponseOpen
 from app.services.shift_service import calculate_hours_worked
 from app.services.iiko import iiko_service
-from app.utilities.shifts import get_transaction
+from app.utilities.shifts import get_earn_transaction
 
 router = APIRouter(prefix="/shifts", tags=["shifts"])
 
@@ -67,7 +67,7 @@ async def closed_shift(
     get_points = iiko_data.revenue // 100
     current_user.points += get_points
 
-    transaction = get_transaction(current_user.id, get_points)
+    transaction = get_earn_transaction(current_user.id, get_points)
 
     try:
         db.add(transaction)

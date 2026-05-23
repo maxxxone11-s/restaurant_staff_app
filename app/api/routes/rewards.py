@@ -7,7 +7,7 @@ from app.schemas.reward_schema import RewardCreate, RewardResponse, RewardBuyRes
 from app.schemas.reward_purchase_schema import RewardPurchaseHistoryResponse
 from app.models.reward_model import Reward
 from app.models.reward_purchase_model import RewardPurchase
-from app.utilities.rewards import get_transaction, get_purchase
+from app.utilities.rewards import get_spend_transaction, get_purchase
 
 router = APIRouter(prefix="/rewards", tags=["rewards"])
 
@@ -73,7 +73,7 @@ async def buy_reward(
         purchase = get_purchase(current_user.id, result.id, result.cost_points)
         balance = current_user.points
 
-        transaction = get_transaction(current_user.id, result.cost_points, result.title)
+        transaction = get_spend_transaction(current_user.id, result.cost_points, result.title)
         try:
             db.add(purchase)
             db.add(transaction)
@@ -83,7 +83,7 @@ async def buy_reward(
             return {"reward": result.title, "price": result.cost_points, "balance": balance}
         except Exception as e:
             await db.rollback()
-            raise HTTPException(status_code=404, detail=f"Детали: {str(e)}")
+            raise HTTPException(status_code=400, detail=f"Детали: {str(e)}")
 
     raise HTTPException(status_code=400, detail="На балансе недостаточно средств")
 

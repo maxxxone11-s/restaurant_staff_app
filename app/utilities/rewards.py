@@ -1,7 +1,7 @@
 from app.models.transactions_model import PointTransaction
 from app.models.reward_purchase_model import RewardPurchase
 
-def get_transaction(user_id, cost_points, title):
+def get_spend_transaction(user_id, cost_points, title):
     transaction = PointTransaction(
         user_id=user_id,
         amount=-cost_points,
