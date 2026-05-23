@@ -7,7 +7,6 @@ from app.schemas.reward_schema import RewardCreate, RewardResponse, RewardBuyRes
 from app.schemas.reward_purchase_schema import RewardPurchaseHistoryResponse
 from app.models.reward_model import Reward
 from app.models.reward_purchase_model import RewardPurchase
-from app.models.user_model import User
 
 router = APIRouter(prefix="/rewards", tags=["rewards"])
 

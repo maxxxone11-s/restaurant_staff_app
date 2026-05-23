@@ -8,6 +8,7 @@ from app.api.deps import get_current_user, get_db
 from app.models.shift_model import Shift
 from app.schemas.shift_schema import ShiftResponse, ShiftClose, ShiftResponseClosed, ShiftResponseOpen
 from app.services.shift_service import calculate_hours_worked
+from app.services.iiko import iiko_service
 
 router = APIRouter(prefix="/shifts", tags=["shifts"])
 
@@ -44,7 +45,7 @@ async def open_shift(
 
 @router.post("/close", response_model=ShiftResponseClosed)
 async def closed_shift(
-    close_data: ShiftClose,
+    iiko_data = Depends(iiko_service),
     current_user = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
@@ -60,17 +61,18 @@ async def closed_shift(
         raise HTTPException(status_code=404, detail="Смена не открыта")
 
     result.closed_shift = func.now()
-    result.revenue = close_data.revenue
+    result.revenue = iiko_data.revenue
 
-    get_points = close_data.revenue // 100
+    get_points = iiko_data.revenue // 100
     current_user.points += get_points
 
     try:
         await db.commit()
         await db.refresh(result)
         return {
-            "revenue": close_data.revenue,
-            "points": get_points
+            "revenue": iiko_data.revenue,
+            "points": get_points,
+            "source": "fake_iiko"
             }
     except Exception as e:
         await db.rollback()

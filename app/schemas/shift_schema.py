@@ -22,3 +22,4 @@ class ShiftResponseOpen(BaseModel):
 class ShiftResponseClosed(BaseModel):
     revenue: int
     points: int
+    source: str

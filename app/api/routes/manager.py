@@ -47,3 +47,17 @@ async def get_name_top_waiter(
     #     data.append({"full_name": name, "total_revenue": total})
 
     return top_waiters
+
+@router.get("/leader_points")
+async def leader_points(
+    access_allow = Depends(require_roles(["admin", "manager"])),
+    db: AsyncSession = Depends(get_db)
+):
+    result = await db.execute(
+        select(User.full_name, User.points)
+        .order_by(User.points.desc())
+    )
+
+    result = result.mappings().all()
+
+    return result
