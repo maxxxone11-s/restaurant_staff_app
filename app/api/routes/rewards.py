@@ -7,7 +7,7 @@ from app.schemas.reward_schema import RewardCreate, RewardResponse, RewardBuyRes
 from app.schemas.reward_purchase_schema import RewardPurchaseHistoryResponse
 from app.models.reward_model import Reward
 from app.models.reward_purchase_model import RewardPurchase
-from app.models.transactions_model import PointTransaction
+from app.utilities.rewards import get_transaction, get_purchase
 
 router = APIRouter(prefix="/rewards", tags=["rewards"])
 
@@ -70,19 +70,10 @@ async def buy_reward(
 
     if current_user.points >= result.cost_points:
         current_user.points -= result.cost_points
-        purchase = RewardPurchase(
-            user_id=current_user.id,
-            reward_id=result.id,
-            cost_points=result.cost_points
-        )
+        purchase = get_purchase(current_user.id, result.id, result.cost_points)
         balance = current_user.points
 
-        transaction = PointTransaction(
-            user_id=current_user.id,
-            amount=-result.cost_points,
-            type="spend",
-            description=f"Покупка: {result.title}"
-        )
+        transaction = get_transaction(current_user.id, result.cost_points, result.title)
         try:
             db.add(purchase)
             db.add(transaction)
