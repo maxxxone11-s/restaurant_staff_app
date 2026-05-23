@@ -34,3 +34,4 @@ class User(Base):
 
     shifts = relationship("Shift", back_populates="user")
     reward_purchase = relationship("RewardPurchase", back_populates="user")
+    transactions = relationship("PointTransaction", back_populates="user")

@@ -6,9 +6,10 @@ from typing import Literal
 
 from app.api.deps import get_current_user, get_db
 from app.models.shift_model import Shift
-from app.schemas.shift_schema import ShiftResponse, ShiftClose, ShiftResponseClosed, ShiftResponseOpen
+from app.schemas.shift_schema import ShiftResponse, ShiftResponseClosed, ShiftResponseOpen
 from app.services.shift_service import calculate_hours_worked
 from app.services.iiko import iiko_service
+from app.models.transactions import PointTransaction
 
 router = APIRouter(prefix="/shifts", tags=["shifts"])
 

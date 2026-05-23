@@ -1,9 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-class ShiftClose(BaseModel):
-    revenue: int
-
 class ShiftResponse(BaseModel):
     id: int
     user_id: int
