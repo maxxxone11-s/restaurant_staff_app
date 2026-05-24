@@ -1,5 +1,10 @@
-lst = []
+from datetime import datetime
 
-lst.append({"name":"max", "city":"moskow"})
+def calculate_hours_worked(closed_shift, open_shift):
+    delta = closed_shift - open_shift
+    return delta.total_seconds() / 3600
 
-print(lst)
+open_shift = datetime(2026, 5, 23, 10, 0)
+closed_shift = datetime(2026, 5, 23, 18, 30)
+
+print(calculate_hours_worked(closed_shift, open_shift))

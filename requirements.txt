@@ -10,3 +10,4 @@ python-jose[cryptography]
 python-dotenv
 alembic
 psycopg2-binary
+pytest

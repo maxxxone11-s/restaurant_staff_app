@@ -7,7 +7,7 @@ from typing import Literal
 from app.api.deps import get_current_user, get_db
 from app.models.shift_model import Shift
 from app.schemas.shift_schema import ShiftResponse, ShiftResponseClosed, ShiftResponseOpen
-from app.services.shift_service import calculate_hours_worked
+from app.services.shift_service import create_shift_response_list
 from app.services.iiko import iiko_service
 from app.utilities.shifts import get_earn_transaction
 
@@ -125,6 +125,6 @@ async def my_shifts(
     result = await db.execute(query)
     shifts_user = result.scalars().all()
 
-    response = calculate_hours_worked(shifts_user)
-
+    response = create_shift_response_list(shifts_user)
+        
     return response

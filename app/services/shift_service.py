@@ -1,12 +1,14 @@
-def calculate_hours_worked(shifts_user):
+def calculate_hours_worked(closed_shift, open_shift):
+    delta = closed_shift - open_shift
+    return delta.total_seconds() / 3600
+
+def create_shift_response_list(shifts_user):
     response = []
 
     for shift in shifts_user:
         hours_worked = None
-        
         if shift.closed_shift is not None:
-            delta = shift.closed_shift - shift.open_shift
-            hours_worked = delta.total_seconds() / 3600
+            hours_worked = calculate_hours_worked(shift.closed_shift, shift.open_shift)
 
         response.append({
             "id": shift.id,
