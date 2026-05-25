@@ -7,7 +7,7 @@ from app.schemas.reward_schema import RewardCreate, RewardResponse, RewardBuyRes
 from app.schemas.reward_purchase_schema import RewardPurchaseHistoryResponse
 from app.models.reward_model import Reward
 from app.models.reward_purchase_model import RewardPurchase
-from app.utilities.rewards import get_spend_transaction, get_purchase, create_reward
+from app.utilities.rewards import get_spend_transaction, get_purchase, build_reward
 from app.core.roles import UserRole
 
 router = APIRouter(prefix="/rewards", tags=["rewards"])
@@ -18,7 +18,7 @@ async def create_reward(
     db: AsyncSession = Depends(get_db),
     allow_roles = Depends(require_roles([UserRole.ADMIN, UserRole.MANAGER])),
 ):
-    reward = create_reward(data_reward)
+    reward = build_reward(data_reward)
     
     try:
         db.add(reward)

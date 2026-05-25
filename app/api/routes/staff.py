@@ -15,17 +15,7 @@ async def get_me_profile(
     db: AsyncSession = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
-    result = await db.execute(
-        select(User)
-        .where(User.id == current_user.id)
-    )
-
-    result = result.scalar_one_or_none()
-
-    try:
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Ошибка в данных: {e}")
+    return current_user
     
 @router.get("/all", response_model=list[UserResponse])
 async def get_all_users(

@@ -21,7 +21,7 @@ def get_purchase(user_id, rew_id, cost_points):
 
     return purchase
 
-def create_reward(data_reward):
+def build_reward(data_reward):
     reward = Reward(
         title=data_reward.title,
         description=data_reward.description,

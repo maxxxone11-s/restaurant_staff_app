@@ -41,6 +41,6 @@ def require_roles(allowed_roles):
         if current_user.role in allowed_roles:
             return current_user
         else:
-            raise HTTPException(status_code=404, detail="Нет доступа")
+            raise HTTPException(status_code=403, detail="Нет доступа")
         
     return role_checker
