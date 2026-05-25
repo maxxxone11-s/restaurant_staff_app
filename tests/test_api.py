@@ -1,42 +1,4 @@
-from fastapi.testclient import TestClient
-from uuid import uuid4
-
-from app.main import app
-from app.api.deps import get_db
-from tests.db import get_db_for_testing
-
-app.dependency_overrides[get_db] = get_db_for_testing
-
-client = TestClient(app)
-
-def create_test_user_data():
-    email = f"test_{uuid4().hex}@gmail.com"
-    password = "test123test"
-    return email, password
-
-def register_user(email, password):
-    response = client.post(
-        "/auth/register",
-        json={
-            "email": email,
-            "password": password,
-            "full_name": "test",
-            "restaurant_name": "testtest",
-            "position": "default"
-        }
-    )
-
-    return response
-
-def login_user(email, password):
-    response = client.post(
-        "/auth/login",
-        json={
-            "email": email,
-            "password": password
-        }
-    )
-    return response
+from tests.utilities import register_user, login_user, create_test_user_data, client
 
 def test_health():
     response = client.get("/health")
@@ -82,3 +44,10 @@ def test_all_user_cycle():
 
     assert response.status_code == 200
     assert data_token["email"] == email
+
+def test_staff_me():
+    response = client.get(
+        "/staff/me"
+    )
+
+    assert response.status_code == 401
