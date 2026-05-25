@@ -12,7 +12,6 @@ router = APIRouter(prefix="/staff", tags=["staff"])
 
 @router.get("/me", response_model=UserResponse)
 async def get_me_profile(
-    db: AsyncSession = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
     return current_user

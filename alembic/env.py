@@ -5,6 +5,7 @@ from sqlalchemy import pool
 
 from alembic import context
 
+from app.core.database import settings
 from app.core.base import Base
 from app.models.shift_model import Shift
 from app.models.user_model import User
