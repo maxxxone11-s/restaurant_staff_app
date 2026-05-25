@@ -1,11 +1,21 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy import NullPool
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-DATABASE_URL = "postgresql+asyncpg://postgres:010SS@localhost:5432/restaurant_table"
+class Settings(BaseSettings):
+    secret_key: str
+    database_url: str
+    test_database_url: str
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8"
+    )
+
+settings = Settings()
 
 engine = create_async_engine(
-    DATABASE_URL,
-    poolclass=NullPool
+    settings.database_url,
+    echo=True
     )
 
 AsyncSessionLocal = async_sessionmaker(

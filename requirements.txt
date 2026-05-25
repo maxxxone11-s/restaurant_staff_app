@@ -1,6 +1,6 @@
 fastapi
 sqlalchemy
-pydantic
+pydantic-settings
 asyncpg
 uvicorn
 greenlet
@@ -10,5 +10,5 @@ python-jose[cryptography]
 python-dotenv
 alembic
 psycopg2-binary
-pytest
+pytest-asyncio
 httpx

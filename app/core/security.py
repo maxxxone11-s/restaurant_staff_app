@@ -1,12 +1,8 @@
 from passlib.context import CryptContext
 from jose import jwt
 from fastapi import HTTPException, Depends
-from dotenv import load_dotenv
-import os 
 
-load_dotenv()
-
-SECRET_KEY = os.getenv("SECRET_KEY")
+from app.core.database import settings
 
 pwd_context = CryptContext(
     schemes=["bcrypt"],
@@ -22,7 +18,7 @@ def verify_password(password: str, hashed_password: str) -> bool:
 
 def decode_token(token):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        payload = jwt.decode(token, settings.secret_key, algorithms=["HS256"])
     
         user_id = payload.get("user_id")
         email = payload.get("email")
