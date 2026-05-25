@@ -1,4 +1,4 @@
-from fastapi import Depends, APIRouter, HTTPException
+from fastapi import Depends, APIRouter
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -6,12 +6,13 @@ from app.api.deps import require_roles, get_db
 from app.models.shift_model import Shift
 from app.models.user_model import User
 from app.schemas.analytics_schema import RevenueResponse, TopWaitersResponse
+from app.core.roles import UserRole
 
 router = APIRouter(prefix="/manager", tags=["manager"])
 
 @router.get("/revenue", response_model=RevenueResponse)
 async def get_all_revenue(
-    current_user = Depends(require_roles(["admin", "manager"])),
+    current_user = Depends(require_roles([UserRole.ADMIN, UserRole.MANAGER])),
     db: AsyncSession = Depends(get_db)
 ):
     result = await db.execute(
@@ -25,7 +26,7 @@ async def get_all_revenue(
 
 @router.get("/top_waiters", response_model=list[TopWaitersResponse])
 async def get_name_top_waiter(
-    current_user = Depends(require_roles(["admin", "manager"])),
+    current_user = Depends(require_roles([UserRole.ADMIN, UserRole.MANAGER])),
     db: AsyncSession = Depends(get_db)
 ):
     result = await db.execute(
@@ -50,7 +51,7 @@ async def get_name_top_waiter(
 
 @router.get("/leader_points")
 async def leader_points(
-    access_allow = Depends(require_roles(["admin", "manager"])),
+    access_allow = Depends(require_roles([UserRole.ADMIN, UserRole.MANAGER])),
     db: AsyncSession = Depends(get_db)
 ):
     result = await db.execute(

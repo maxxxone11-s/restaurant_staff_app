@@ -5,6 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.user_model import User
 from app.api.deps import get_current_user, get_db, require_roles
 from app.schemas.user_schema import UserResponse, UserUpdate
+from app.core.roles import UserRole
+from app.utilities.staff import create_user
 
 router = APIRouter(prefix="/staff", tags=["staff"])
 
@@ -28,28 +30,13 @@ async def get_me_profile(
 @router.get("/all", response_model=list[UserResponse])
 async def get_all_users(
     db: AsyncSession = Depends(get_db),
-    current_user = Depends(require_roles(["admin", "manager"]))
+    allow_roles = Depends(require_roles([UserRole.ADMIN, UserRole.MANAGER]))
 ):
     result = await db.execute(select(User))
 
     result = result.scalars().all()
 
-    response = []
-
-    for user in result:
-        one_user = {
-        "id": user.id,
-        "email":user.email,
-        "restaurant_name": user.restaurant_name,
-        "full_name": user.full_name,
-        "points": user.points,
-        "position": user.position,
-        "role": user.role,
-        "hire_date": user.hire_date,
-        "is_active": user.is_active
-        }
-
-        response.append(one_user)
+    response = create_user(result)
 
     return response
 
@@ -58,7 +45,7 @@ async def user_update(
     user_id: int,
     data_user_update: UserUpdate,
     db: AsyncSession = Depends(get_db),
-    current_user = Depends(require_roles(["admin", "manager"]))
+    current_user = Depends(require_roles([UserRole.ADMIN, UserRole.MANAGER]))
 ):
     update_data = data_user_update.model_dump(
         exclude_unset=True

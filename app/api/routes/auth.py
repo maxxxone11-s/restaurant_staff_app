@@ -1,14 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import IntegrityError
 
 from app.schemas.user_schema import UserCreate, UserResponse, UserLogin
 from app.api.deps import get_db, get_current_user
 from app.models.user_model import User
-from app.core.security import hash_password, verify_password
+from app.core.security import verify_password
 from app.services.access_token import create_access_token
-from app.core.roles import UserRole
+from app.utilities.auth import create_user
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -17,14 +16,7 @@ async def register_user(
     user_data: UserCreate,
     db: AsyncSession = Depends(get_db)
 ):
-    user = User(
-        email=user_data.email,
-        full_name=user_data.full_name,
-        position=user_data.position,
-        restaurant_name=user_data.restaurant_name,
-        role=UserRole.WAITER.value,
-        hashed_password=hash_password(user_data.password)
-    )
+    user = create_user(user_data)
     try:
         db.add(user)
         await db.commit()

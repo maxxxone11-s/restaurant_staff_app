@@ -1,6 +1,6 @@
 from passlib.context import CryptContext
 from jose import jwt
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException
 
 from app.core.database import settings
 
@@ -24,12 +24,12 @@ def decode_token(token):
         email = payload.get("email")
 
         if user_id is None or email is None:
-            raise HTTPException(status_code=401, detail="Ошибка: В токене отсутствуют необходимые поля.")
+            raise HTTPException(status_code=401, detail="Ошибка: В токене отсутствуют необходимые поля")
             
         return {"user_id": user_id, "email": email}
 
     except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Ошибка: Срок действия токена истек.")
+        raise HTTPException(status_code=401, detail="Ошибка: Срок действия токена истек")
     
     except jwt.JWTError:
-        raise HTTPException(status_code=401, detail="Ошибка: Неверная подпись или испорченный токен.")
+        raise HTTPException(status_code=401, detail="Ошибка: Неверная подпись или испорченный токен")

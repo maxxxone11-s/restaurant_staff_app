@@ -1,5 +1,6 @@
 from app.models.transactions_model import PointTransaction
 from app.models.reward_purchase_model import RewardPurchase
+from app.models.reward_model import Reward
 
 def get_spend_transaction(user_id, cost_points, title):
     transaction = PointTransaction(
@@ -19,3 +20,12 @@ def get_purchase(user_id, rew_id, cost_points):
     )
 
     return purchase
+
+def create_reward(data_reward):
+    reward = Reward(
+        title=data_reward.title,
+        description=data_reward.description,
+        cost_points=data_reward.cost_points
+    )
+
+    return reward
