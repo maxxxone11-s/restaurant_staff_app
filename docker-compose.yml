@@ -18,8 +18,8 @@ services:
       - "8000:8000"
     environment:
       SECRET_KEY: 90ab7c244a156c04f99dbd757d4e321f5cf120f7804afb5cb0fc2fb7324d15fa
-      DATABASE_URL: postgresql+asyncpg://postgres:010SS@db:5432/restaurant_db
-      TEST_DATABASE_URL: postgresql+asyncpg://postgres:010SS@db:5432/test_restaurant_db
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/restaurant_db
+      TEST_DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/test_restaurant_db
     depends_on:
       - db
 volumes:
