@@ -1,12 +1,14 @@
 from fastapi import Depends, APIRouter
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
+import json
 
 from app.api.deps import require_roles, get_db
 from app.models.shift_model import Shift
 from app.models.user_model import User
 from app.schemas.analytics_schema import RevenueResponse, TopWaitersResponse
 from app.core.roles import UserRole
+from app.core.redis import redis_client
 
 router = APIRouter(prefix="/manager", tags=["manager"])
 
@@ -40,12 +42,7 @@ async def get_name_top_waiter(
         .order_by(func.sum(Shift.revenue).desc())
     )
 
-    # data = []
-
     top_waiters = result.mappings().all()
-
-    # for name, total in top_waiters:
-    #     data.append({"full_name": name, "total_revenue": total})
 
     return top_waiters
 
@@ -54,11 +51,22 @@ async def leader_points(
     access_allow = Depends(require_roles([UserRole.ADMIN, UserRole.MANAGER])),
     db: AsyncSession = Depends(get_db)
 ):
+    cached_data = await redis_client.get("leader_points")
+
+    if cached_data:
+        return json.loads(cached_data)
+    
     result = await db.execute(
         select(User.full_name, User.points)
         .order_by(User.points.desc())
     )
 
-    result = result.mappings().all()
+    data = [dict(item._mapping) for item in result]
 
-    return result
+    await redis_client.set(
+        "leader_points",
+        json.dumps(data),
+        ex=60
+    )
+
+    return data

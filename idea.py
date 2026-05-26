@@ -1,9 +1,9 @@
-def abc():
-    email = "123"
-    passwa = "321"
-    return email, passwa
+class User():
+    def __init__(self, name, email):
+        self.name = name
+        self.email = email
 
+    def __str__(self):
+        return f"name="
 
-email, password = abc()
-
-print(password)
+account = User("max", "asdf")

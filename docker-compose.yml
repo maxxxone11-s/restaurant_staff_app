@@ -22,5 +22,15 @@ services:
       TEST_DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/test_restaurant_db
     depends_on:
       - db
+    
+  redis:
+    image: redis:7
+    container_name: redis_restaurant_app
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
 volumes:
   postgres_data:
+  redis_data:

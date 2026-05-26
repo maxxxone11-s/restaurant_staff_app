@@ -5,6 +5,7 @@ class Settings(BaseSettings):
     secret_key: str
     database_url: str
     test_database_url: str
+    redis_url: str
 
     model_config = SettingsConfigDict(
         env_file=".env",
