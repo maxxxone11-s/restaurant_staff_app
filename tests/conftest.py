@@ -10,7 +10,7 @@ from app.core.base import Base
 from tests.db import engine
 
 @pytest.fixture(scope="session", autouse=True)
-async def prepare_test_database():
+async def create_test_database():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     
