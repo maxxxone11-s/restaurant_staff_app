@@ -9,6 +9,7 @@ from app.models.reward_model import Reward
 from app.models.reward_purchase_model import RewardPurchase
 from app.utilities.rewards import get_spend_transaction, get_purchase, build_reward
 from app.core.roles import UserRole
+from app.core.redis import redis_client
 
 router = APIRouter(prefix="/rewards", tags=["rewards"])
 
@@ -78,6 +79,9 @@ async def buy_reward(
             await db.commit()
             await db.refresh(current_user)
             await db.refresh(purchase)
+            await redis_client.delete(
+                "leader_points"
+            )
             return {"reward": result.title, "price": result.cost_points, "balance": balance}
         except Exception as e:
             await db.rollback()
