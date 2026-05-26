@@ -1,15 +1,16 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+import json
 
 from app.api.deps import get_db, require_roles, get_current_user
 from app.schemas.reward_schema import RewardCreate, RewardResponse, RewardBuyResponse
-from app.schemas.reward_purchase_schema import RewardPurchaseHistoryResponse
 from app.models.reward_model import Reward
 from app.models.reward_purchase_model import RewardPurchase
 from app.utilities.rewards import get_spend_transaction, get_purchase, build_reward
-from app.core.roles import UserRole
 from app.core.redis import redis_client
+from app.schemas.reward_purchase_schema import RewardPurchaseHistoryResponse
+from app.core.roles import UserRole
 
 router = APIRouter(prefix="/rewards", tags=["rewards"])
 
@@ -25,6 +26,9 @@ async def create_reward(
         db.add(reward)
         await db.commit()
         await db.refresh(reward)
+        await redis_client.delete(
+            "rewards_active"
+        )
         return reward
     except Exception:
         await db.rollback()
@@ -34,15 +38,36 @@ async def create_reward(
 async def get_reward(
     db: AsyncSession = Depends(get_db)
 ):
+    cached_data = await redis_client.get("rewards_active")
+
+    if cached_data:
+        return json.loads(cached_data)
+
     result = await db.execute(
         select(Reward)
         .where(Reward.is_active.is_(True))
     )
 
     result = result.scalars().all()
+    data = [
+        {
+            "id": item.id,
+            "title": item.title,
+            "description": item.description,
+            "cost_points": item.cost_points,
+            "is_active": item.is_active,
+            "created_at": item.created_at.isoformat()
+        }
+        for item in result
+    ]
 
-    if result:
-        return result
+    if data:
+        await redis_client.set(
+        "rewards_active",
+        json.dumps(data),
+        ex=3600
+        )
+        return data
     
     raise HTTPException(status_code=404, detail="Наград в данный момент нету")
 
