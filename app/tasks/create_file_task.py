@@ -10,5 +10,5 @@ def create_report(users):
     logger.info(
         f"Create report date: {date.today()}"
     )
-    with open(f"report{date.today()}.json", "w", encoding="utf-8") as file:
+    with open(f"/app/reports/report_{date.today()}.json", "w", encoding="utf-8") as file:
         json.dump(users, file, ensure_ascii=False, indent=4)
