@@ -11,6 +11,7 @@ from app.services.shift_service import create_shift_response_list
 from app.services.iiko import iiko_service
 from app.utilities.shifts import get_earn_transaction
 from app.core.redis import redis_client
+from app.tasks.report_task import process_shift_closed
 
 router = APIRouter(prefix="/shifts", tags=["shifts"])
 
@@ -74,6 +75,11 @@ async def closed_shift(
     try:
         db.add(transaction)
         await db.commit()
+        process_shift_closed.delay(
+            current_user.id,
+            iiko_data.revenue,
+            get_points
+        )
         await db.refresh(result)
         await redis_client.delete(
             "leader_points"
