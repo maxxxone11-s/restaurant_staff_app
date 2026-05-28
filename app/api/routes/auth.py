@@ -9,6 +9,7 @@ from app.core.security import verify_password
 from app.services.access_token import create_access_token
 from app.utilities.auth import create_user
 from app.core.rate_limit import login_rate_limit
+from app.core.logger import logger
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -51,12 +52,13 @@ async def login_user(
 
     if is_password_valid:
         access_token = create_access_token(user.id, user.email)
+        logger.info(f"Пользователь успешно вошел в систему: {user.email}")
         return {
             "access_token": access_token,
             "token_type": "bearer"
         }
-
-    raise HTTPException(status_code=404, detail="Password don't correct")
+    logger.warning(f"Неверный пароль: {email}")
+    raise HTTPException(status_code=404, detail=f"Неверный пароль")
 
 @router.get("/me", response_model=UserResponse)
 async def get_me(current_user = Depends(get_current_user)):
