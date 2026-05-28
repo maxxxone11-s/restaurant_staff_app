@@ -8,7 +8,7 @@ from app.core.logger import logger
 def create_report(users):
 
     logger.info(
-        f"Create report date: {date.today()}"
+        f"Создан отчет сотрудников за дату: {date.today()}"
     )
     with open(f"/app/reports/report_{date.today()}.json", "w", encoding="utf-8") as file:
         json.dump(users, file, ensure_ascii=False, indent=4)

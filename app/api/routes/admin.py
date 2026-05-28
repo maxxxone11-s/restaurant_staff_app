@@ -37,6 +37,6 @@ async def get_users(
     if users: 
         if create_file == "yes":
             create_report.delay(users)
-        return users
+        return data
 
     raise HTTPException(status_code=404, detail="Пользователи не найдены")

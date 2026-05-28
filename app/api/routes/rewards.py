@@ -12,6 +12,7 @@ from app.core.redis import redis_client
 from app.schemas.reward_purchase_schema import RewardPurchaseHistoryResponse
 from app.core.roles import UserRole
 from app.core.redis import redis_client
+from app.core.logger import logger
 
 
 router = APIRouter(prefix="/rewards", tags=["rewards"])
@@ -31,6 +32,7 @@ async def create_reward(
         await redis_client.delete(
             "rewards_active"
         )
+        logger.info(f"Список товаров удален из кеша")
         return reward
     except Exception:
         await db.rollback()
@@ -55,6 +57,7 @@ async def get_reward(
     data = create_data_for_get_rewards(result)
 
     if data:
+        logger.info(f"Список товаров сохранен в кеше")
         await redis_client.set(
         "rewards_active",
         json.dumps(data),

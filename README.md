@@ -1,77 +1,162 @@
-# Restaurant Staff App
+Restaurant Staff App
 
-Backend-сервис для управления персоналом ресторана: смены сотрудников, роли, выручка, начисление баллов, магазин наград и аналитика.
+Backend-сервис для управления персоналом ресторана.
 
-Система позволяет сотрудникам открывать и закрывать смены, получать баллы за выручку, тратить их в reward shop, а менеджерам и администраторам — смотреть аналитику по выручке, топ официантов и leaderboard по баллам.
+Проект разработан на FastAPI и позволяет управлять сотрудниками, сменами, системой баллов и наградами.
 
-Проект также включает fake iiko/keeper integration: при закрытии смены выручка имитируется как будто она пришла из внешней ресторанной системы.
+Возможности
 
----
+Авторизация и аутентификация
 
-## Основные возможности
+* Регистрация сотрудников
+* JWT авторизация
+* Получение данных текущего пользователя
+* Разграничение прав доступа по ролям
 
-- Регистрация и авторизация пользователей через JWT
-- Role-based access control: admin / manager / waiter
-- Профиль сотрудника: ресторан, должность, дата найма, статус активности
-- Открытие и закрытие смен
-- Fake iiko/keeper integration для получения revenue
-- Начисление points за выручку
-- История движения баллов
-- Reward shop для покупки наград за points
-- История покупок наград
-- Аналитика по общей выручке
-- Топ официантов по revenue
-- Leaderboard сотрудников по points
-- Фильтрация, сортировка и pagination для смен
-- Async SQLAlchemy + PostgreSQL
-- Alembic migrations
-- Pytest tests с отдельной test database
-- Docker support
+Роли пользователей
 
----
+* ADMIN
+* MANAGER
+* STAFF
 
-## Architecture
+Управление сменами
 
-Проект разделён на несколько слоёв:
+* Открытие смены
+* Закрытие смены
+* Начисление баллов за выручку
+* История смен
 
-- `api/routes` — FastAPI endpoints
-- `models` — SQLAlchemy ORM models
-- `schemas` — Pydantic request/response schemas
-- `services` — бизнес-логика и интеграции
-- `utilities` — вспомогательные функции
-- `tests` — unit и API tests
+Система баллов
 
----
+* Начисление баллов сотрудникам
+* История транзакций
+* Таблица лидеров
 
-## Tech Stack
+Награды
 
-- Python
-- FastAPI
-- PostgreSQL
-- SQLAlchemy Async
-- Alembic
-- Pydantic
-- JWT / OAuth2PasswordBearer
-- Pytest
-- Docker
-- Docker Compose
+* Создание наград
+* Покупка наград за баллы
+* История покупок
 
----
+Redis
 
-## Run with Docker
+Используется для:
 
-Build and run containers:
+* Кэширования данных
+* Rate limiting авторизации
+* Celery broker
+* Celery result backend
 
-```bash
-docker compose up --build
+Celery
 
+Используется для фоновых задач:
 
-Apply migrations:
-docker compose exec app alembic upgrade head
+* Генерация отчетов по сотрудникам
+* Выполнение длительных операций вне HTTP-запроса
 
-API docs:
-http://localhost:8000/docs
+Monitoring
 
-Run tests
+* Health check endpoint
+* Application logging
+
+Testing
+
+* Pytest
+* Отдельная тестовая база данных
+* GitHub Actions CI
+
+⸻
+
+Технологии
+
+* Python 3.12
+* FastAPI
+* PostgreSQL
+* SQLAlchemy Async
+* Alembic
+* Redis
+* Celery
+* Nginx
+* Docker Compose
+* Pytest
+* GitHub Actions
+
+⸻
+
+Структура проекта
+
+app/
+
+* api/
+* core/
+* models/
+* schemas/
+* services/
+* tasks/
+* utilities/
+
+tests/
+
+* test_api.py
+* utilities.py
+* conftest.py
+
+⸻
+
+Переменные окружения
+
+Создайте файл .env
+
+SECRET_KEY=your_secret_key
+DATABASE_URL=postgresql+asyncpg://postgres:password@localhost:5432/restaurant_db
+TEST_DATABASE_URL=postgresql+asyncpg://postgres:password@localhost:5432/test_restaurant_db
+REDIS_URL=redis://localhost:6379
+
+⸻
+
+Запуск проекта
+
+Сборка контейнеров:
+
+docker compose build
+
+Запуск:
+
+docker compose up
+
+Документация Swagger:
+
+http://localhost/docs
+
+⸻
+
+Запуск тестов
+
 pytest
-Тесты используют отдельную тестовую БД и dependency_overrides FastAPI
+
+⸻
+
+CI
+
+При каждом Push и Pull Request автоматически запускаются:
+
+* PostgreSQL
+* Redis
+* Pytest
+
+GitHub Actions проверяет корректность работы проекта перед слиянием изменений.
+
+⸻
+
+Будущие улучшения
+
+* Экспорт отчетов в Excel
+* Email уведомления
+* RabbitMQ интеграция
+* Расширенная аналитика сотрудников
+
+⸻
+
+Автор
+
+Max Shoyo

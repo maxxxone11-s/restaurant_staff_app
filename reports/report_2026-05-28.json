@@ -1,0 +1,72 @@
+[
+    {
+        "id": 2,
+        "email": "maxone1234@gmail.com",
+        "restaurant_name": "qwert",
+        "full_name": "Maxmaxxam",
+        "position": "weiter",
+        "role": "waiter",
+        "hire_date": "2026-05-26T11:51:21.924725+00:00",
+        "is_active": true
+    },
+    {
+        "id": 4,
+        "email": "vika12@gmail.com",
+        "restaurant_name": "qwert",
+        "full_name": "Maxmaxxam",
+        "position": "weiter",
+        "role": "waiter",
+        "hire_date": "2026-05-26T11:51:44.364559+00:00",
+        "is_active": true
+    },
+    {
+        "id": 5,
+        "email": "venera1241@gmail.com",
+        "restaurant_name": "qwert",
+        "full_name": "Maxmaxxam",
+        "position": "weiter",
+        "role": "waiter",
+        "hire_date": "2026-05-26T11:51:55.130967+00:00",
+        "is_active": true
+    },
+    {
+        "id": 7,
+        "email": "maxone12345@gmail.com",
+        "restaurant_name": "kovcheg",
+        "full_name": "roman",
+        "position": "weiter",
+        "role": "waiter",
+        "hire_date": "2026-05-28T21:53:43.366709+00:00",
+        "is_active": true
+    },
+    {
+        "id": 8,
+        "email": "maxone123456@gmail.com",
+        "restaurant_name": "kovcheg",
+        "full_name": "roman",
+        "position": "weiter",
+        "role": "waiter",
+        "hire_date": "2026-05-28T21:54:05.569179+00:00",
+        "is_active": true
+    },
+    {
+        "id": 3,
+        "email": "pasha1234@gmail.com",
+        "restaurant_name": "qwert",
+        "full_name": "Maxmaxxam",
+        "position": "weiter",
+        "role": "waiter",
+        "hire_date": "2026-05-26T11:51:35.436371+00:00",
+        "is_active": false
+    },
+    {
+        "id": 1,
+        "email": "maxone123@gmail.com",
+        "restaurant_name": "loona",
+        "full_name": "Maxxxone",
+        "position": "admin",
+        "role": "admin",
+        "hire_date": "2026-05-25T17:55:10.593878+00:00",
+        "is_active": true
+    }
+]
