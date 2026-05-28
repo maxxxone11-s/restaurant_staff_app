@@ -108,8 +108,11 @@ tests/
 Создайте файл .env
 
 SECRET_KEY=your_secret_key
+
 DATABASE_URL=postgresql+asyncpg://postgres:password@localhost:5432/restaurant_db
+
 TEST_DATABASE_URL=postgresql+asyncpg://postgres:password@localhost:5432/test_restaurant_db
+
 REDIS_URL=redis://localhost:6379
 
 ⸻
@@ -154,9 +157,3 @@ GitHub Actions проверяет корректность работы прое
 * Email уведомления
 * RabbitMQ интеграция
 * Расширенная аналитика сотрудников
-
-⸻
-
-Автор
-
-Max Shoyo
