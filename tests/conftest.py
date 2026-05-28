@@ -27,6 +27,7 @@ async def create_test_database():
 @pytest.fixture
 def client():
     app.dependency_overrides[get_db] = get_db_for_testing
+    app.dependency_overrides[login_rate_limit] = fake_rate_limit
 
     with TestClient(app) as test_client:
         yield test_client
@@ -36,7 +37,6 @@ def client():
 async def fake_rate_limit():
     return None
 
-app.dependency_overrides[login_rate_limit] = fake_rate_limit
 
 # @pytest.fixture(autouse=True)
 # async def cleanup_redis():
