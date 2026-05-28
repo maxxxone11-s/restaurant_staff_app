@@ -32,9 +32,9 @@ async def register_user(
 @router.post("/login")
 async def login_user(
     user_data_login: UserLogin,
+    rate_limit = Depends(login_rate_limit),
     db: AsyncSession = Depends(get_db)
 ):
-    rate_limit = Depends(login_rate_limit)
     email = user_data_login.email
     password = user_data_login.password
 
