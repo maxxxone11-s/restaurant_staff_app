@@ -1,34 +1,34 @@
-from tests.utilities import register_user, login_user, create_test_user_data, client
+from tests.utilities import register_user, login_user, create_test_user_data
 
-def test_health():
+def test_health(client):
     response = client.get("/health")
 
     assert response.status_code == 200
 
-def test_register():
+def test_register(client):
     email, password = create_test_user_data()
 
-    response = register_user(email, password)
+    response = register_user(client, email, password)
     data = response.json()
 
     assert data['email'] == email
     assert response.status_code == 200
     
 
-def test_login():
+def test_login(client):
     email, password = create_test_user_data()
-    register_user(email, password)
+    register_user(client, email, password)
 
-    response = login_user(email, password)
+    response = login_user(client, email, password)
     data = response.json()
 
     assert data["access_token"] is not None
     assert data["token_type"] == 'bearer'
 
-def test_all_user_cycle():
+def test_all_user_cycle(client):
     email, password = create_test_user_data()
-    register_user(email, password)
-    response_login = login_user(email, password)
+    register_user(client, email, password)
+    response_login = login_user(client, email, password)
 
     data_login = response_login.json()
     access_token = data_login["access_token"]
@@ -45,7 +45,7 @@ def test_all_user_cycle():
     assert response.status_code == 200
     assert data_token["email"] == email
 
-def test_staff_me():
+def test_staff_me(client):
     response = client.get(
         "/staff/me"
     )

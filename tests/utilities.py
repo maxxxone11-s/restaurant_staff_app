@@ -5,7 +5,6 @@ from app.main import app
 from app.api.deps import get_db
 from tests.db import get_db_for_testing
 
-client = TestClient(app)
 app.dependency_overrides[get_db] = get_db_for_testing
 
 def create_test_user_data():
@@ -13,8 +12,8 @@ def create_test_user_data():
     password = "test123test"
     return email, password
 
-def register_user(email, password):
-    response = client.post(
+def register_user(client, email, password):
+    return client.post(
         "/auth/register",
         json={
             "email": email,
@@ -25,14 +24,11 @@ def register_user(email, password):
         }
     )
 
-    return response
-
-def login_user(email, password):
-    response = client.post(
+def login_user(client, email, password):
+    return client.post(
         "/auth/login",
         json={
             "email": email,
             "password": password
         }
     )
-    return response
