@@ -7,6 +7,7 @@ from app.api.deps import get_db, get_current_user
 from app.models.transactions_model import PointTransaction
 from app.schemas.points_schema import PointsHistoryResponse
 from app.core.redis import redis_client
+from app.utilities.points import create_data_for_my
 
 router = APIRouter(prefix="/points", tags=["points"])
 
@@ -27,17 +28,8 @@ async def get_history_points(
     )
 
     result = result.scalars().all()
-    data = [
-        {
-            "id": item.id,
-            "amount": item.amount,
-            "type": item.type,
-            "description": item.description,
-            "created_at": item.created_at.isoformat()
 
-        }
-        for item in result
-    ]
+    data = create_data_for_my(result)
 
     if data:
         await redis_client.set(

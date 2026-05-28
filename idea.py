@@ -1,9 +1,11 @@
-class User():
-    def __init__(self, name, email):
-        self.name = name
-        self.email = email
+def processing_open():
+      return 1
 
-    def __str__(self):
-        return f"name="
+def processing_closed():
+      pass
 
-account = User("max", "asdf")
+status = "open"
+
+query = processing_open() if status == "open" else processing_closed()
+
+print(query)

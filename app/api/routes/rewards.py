@@ -7,11 +7,12 @@ from app.api.deps import get_db, require_roles, get_current_user
 from app.schemas.reward_schema import RewardCreate, RewardResponse, RewardBuyResponse
 from app.models.reward_model import Reward
 from app.models.reward_purchase_model import RewardPurchase
-from app.utilities.rewards import get_spend_transaction, get_purchase, build_reward
+from app.utilities.rewards import get_spend_transaction, get_purchase, build_reward, create_data_for_get_rewards, create_data_for_my
 from app.core.redis import redis_client
 from app.schemas.reward_purchase_schema import RewardPurchaseHistoryResponse
 from app.core.roles import UserRole
 from app.core.redis import redis_client
+
 
 router = APIRouter(prefix="/rewards", tags=["rewards"])
 
@@ -50,17 +51,8 @@ async def get_reward(
     )
 
     result = result.scalars().all()
-    data = [
-        {
-            "id": item.id,
-            "title": item.title,
-            "description": item.description,
-            "cost_points": item.cost_points,
-            "is_active": item.is_active,
-            "created_at": item.created_at.isoformat()
-        }
-        for item in result
-    ]
+
+    data = create_data_for_get_rewards(result)
 
     if data:
         await redis_client.set(
@@ -134,14 +126,8 @@ async def get_list_purchase(
     )
 
     result = result.mappings().all()
-    data = [
-        {
-            "title": item["title"],
-            "cost_points": item["cost_points"],
-            "purchased_at": item["purchased_at"].isoformat()
-        }
-        for item in result
-    ]
+    
+    data = create_data_for_my(result)
 
     if data:
         await redis_client.set(

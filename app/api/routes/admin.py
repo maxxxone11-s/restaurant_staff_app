@@ -8,6 +8,7 @@ from app.api.deps import get_db, require_roles
 from app.schemas.user_schema import UserResponse
 from app.core.roles import UserRole
 from app.tasks.create_file_task import create_report
+from app.utilities.admin import create_users_list
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -31,19 +32,8 @@ async def get_users(
     result = await db.execute(query)
     data = result.scalars().all()
 
-    users = [
-        {
-            "id": user.id, 
-            "email": user.email,
-            "restaurant_name": user.restaurant_name,
-            "full_name": user.full_name,
-            "position": user.position,
-            "role": user.role,
-            "hire_date": user.hire_date.isoformat(),
-            "is_active": user.is_active
-        }
-        for user in data
-    ]
+    users = create_users_list(data)
+    
     if users: 
         if create_file == "yes":
             create_report.delay(users)

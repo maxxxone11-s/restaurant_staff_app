@@ -29,3 +29,29 @@ def build_reward(data_reward):
     )
 
     return reward
+
+def create_data_for_get_rewards(data):
+    result = [
+        {
+            "id": item.id,
+            "title": item.title,
+            "description": item.description,
+            "cost_points": item.cost_points,
+            "is_active": item.is_active,
+            "created_at": item.created_at.isoformat()
+        }
+        for item in data
+    ]
+
+    return result
+
+def create_data_for_my(data):
+    result = [
+        {
+            "title": item["title"],
+            "cost_points": item["cost_points"],
+            "purchased_at": item["purchased_at"].isoformat()
+        }
+        for item in data
+    ]
+    return result
