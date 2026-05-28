@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -8,6 +8,7 @@ from app.models.user_model import User
 from app.core.security import verify_password
 from app.services.access_token import create_access_token
 from app.utilities.auth import create_user
+from app.core.rate_limit import login_rate_limit
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -30,6 +31,7 @@ async def register_user(
 @router.post("/login")
 async def login_user(
     user_data_login: UserLogin,
+    rate_limit = Depends(login_rate_limit),
     db: AsyncSession = Depends(get_db)
 ):
     email = user_data_login.email
@@ -43,7 +45,7 @@ async def login_user(
     user = result.scalar_one_or_none()
 
     if not user:
-        raise HTTPException(status_code=400, detail="User not found")
+        raise HTTPException(status_code=400, detail="Пользователь не найден")
     
     is_password_valid = verify_password(password, user.hashed_password)
 
