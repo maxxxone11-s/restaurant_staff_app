@@ -82,7 +82,8 @@ async def closed_shift(
         )
         await db.refresh(result)
         await redis_client.delete(
-            "leader_points"
+            "leader_points",
+            f"user_points:{current_user.id}"
         )
         return {
             "revenue": iiko_data.revenue,

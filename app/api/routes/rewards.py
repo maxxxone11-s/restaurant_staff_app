@@ -11,6 +11,7 @@ from app.utilities.rewards import get_spend_transaction, get_purchase, build_rew
 from app.core.redis import redis_client
 from app.schemas.reward_purchase_schema import RewardPurchaseHistoryResponse
 from app.core.roles import UserRole
+from app.core.redis import redis_client
 
 router = APIRouter(prefix="/rewards", tags=["rewards"])
 
@@ -105,7 +106,9 @@ async def buy_reward(
             await db.refresh(current_user)
             await db.refresh(purchase)
             await redis_client.delete(
-                "leader_points"
+                "leader_points",
+                f"user_points:{current_user.id}",
+                f"user_purchase:{current_user.id}"
             )
             return {"reward": result.title, "price": result.cost_points, "balance": balance}
         except Exception as e:
@@ -119,6 +122,11 @@ async def get_list_purchase(
     current_user = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
+    cached_data = await redis_client.get(f"user_purchase:{current_user.id}")
+
+    if cached_data:
+        return json.loads(cached_data)
+
     result = await db.execute(
         select(Reward.title, RewardPurchase.cost_points, RewardPurchase.purchased_at)
         .join(Reward, RewardPurchase.reward_id == Reward.id)
@@ -126,7 +134,23 @@ async def get_list_purchase(
     )
 
     result = result.mappings().all()
+    data = [
+        {
+            "title": item["title"],
+            "cost_points": item["cost_points"],
+            "purchased_at": item["purchased_at"].isoformat()
+        }
+        for item in result
+    ]
 
-    return result
+    if data:
+        await redis_client.set(
+            f"user_purchase:{current_user.id}",
+            json.dumps(data),
+            ex=18000
+        )
+        return data
+
+    raise HTTPException(status_code=404, detail="Вы еще не совершали покупки")
 
 
