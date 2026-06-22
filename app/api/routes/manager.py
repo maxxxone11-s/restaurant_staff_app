@@ -28,7 +28,7 @@ async def get_all_revenue(
 
 @router.get("/top_waiters", response_model=list[TopWaitersResponse])
 async def get_name_top_waiter(
-    current_user = Depends(require_roles([UserRole.ADMIN, UserRole.MANAGER])),
+    access_allow = Depends(require_roles([UserRole.ADMIN, UserRole.MANAGER])),
     db: AsyncSession = Depends(get_db)
 ):
     result = await db.execute(
